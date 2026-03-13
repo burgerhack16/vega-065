@@ -1,0 +1,86 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    group = 'ru.govno.client'
+    version = '00065D-Hotfix'
+
+    compileJava {
+        sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_17
+    }
+
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_17
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/groups/public/' }
+    }
+
+    dependencies {
+        implementation files('libs/libs.jar')
+    }
+}
+
+task extractNatives {
+    doLast {
+        def nativesDir = file("$buildDir/natives")
+        nativesDir.mkdirs()
+        
+        configurations.runtimeClasspath.each { file ->
+            if (file.name.endsWith('.jar')) {
+                copy {
+                    from zipTree(file)
+                    into nativesDir
+                    include '*.dll'
+                    include '*.so'
+                    include '*.dylib'
+                }
+            }
+        }
+        
+        copy {
+            from zipTree('libs/libs.jar')
+            into nativesDir
+            include '*.dll'
+            include '*.so'
+            include '*.dylib'
+        }
+    }
+}
+
+tasks.withType(JavaExec) {
+    dependsOn extractNatives
+    systemProperty 'java.library.path', file("$buildDir/natives").absolutePath
+    jvmArgs = [
+        '-Xms2G',
+        '-Xmx4G',
+        '-XX:+UseG1GC',
+        '-XX:+UnlockExperimentalVMOptions',
+        '-XX:G1NewSizePercent=20',
+        '-XX:G1ReservePercent=20',
+        '-XX:MaxGCPauseMillis=50',
+        '-XX:G1HeapRegionSize=32M'
+    ]
+}
+
+jar {
+    manifest {
+        attributes(
+                'Manifest-Version': '1.0',
+                'Main-Class': 'Start',
+                'Comment': 'VegaLine SRC by github.com/3000IQPlay',
+        )
+    }
+}
