@@ -80,7 +80,7 @@ jar {
         attributes(
                 'Manifest-Version': '1.0',
                 'Main-Class': 'Start',
-                'Comment': 'VegaLine SRC by github.com/3000IQPlay',
+                'Comment': 'VegaLine SRC',
         )
     }
 }
