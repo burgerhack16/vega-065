@@ -2,7 +2,7 @@
 
 ![VEGA Screenshot](https://github.com/burgerhack16/vega-065/blob/master/image.png?raw=true)
 
-## Описание
+## CLAUNCH TAGS))))
 CLaunch.java:
 - check hwid
 - block cheat func
