@@ -127,9 +127,6 @@ public class UProfilers {
             this.pcProperties.clear();
             String jvmString = System.getProperty("java.vendor") + "/" + String.format("Java: %s %dbit", System.getProperty("java.version"), Minecraft.getMinecraft().isJava64bit() ? 64 : 32);
             String recommendedVM = "17.0.6";
-            if (Client.badJavaVersion) {
-                jvmString = jvmString + TextFormatting.DARK_RED + " (not recommended java version, update your java to " + recommendedVM + " version)";
-            }
             this.pcProperties.add("Current_JVM: " + jvmString);
             double jvmCpuLoad = osBean.getProcessCpuLoad();
             this.pcProperties.add("JVM_cpu_load: " + String.format("%.2f", jvmCpuLoad * 100.0) + "%");
